@@ -4,8 +4,15 @@ import { HelloWave } from '@/components/HelloWave';
 import ParallaxScrollView from '@/components/ParallaxScrollView';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
+import { useFonts } from "expo-font";
 
 export default function HomeScreen() {
+  const [fontsLoaded, fontError] = useFonts({
+    'outfit': require('../../assets/fonts/Outfit-Regular.ttf'),
+    'outfit-medium': require('../../assets/fonts/Outfit-Medium.ttf'),
+    'outfit-bold': require('../../assets/fonts/Outfit-Bold.ttf'),
+  });
+
   return (
     <ParallaxScrollView
       headerBackgroundColor={{ light: '#A1CEDC', dark: '#1D3D47' }}
@@ -20,7 +27,10 @@ export default function HomeScreen() {
         <HelloWave />
       </ThemedView>
       <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 1: Try it</ThemedText>
+        <ThemedText style={{
+            fontFamily: 'outfit-bold',
+            fontSize: 24,
+          }}>Step 1: Try it</ThemedText>
         <ThemedText>
           Edit <ThemedText type="defaultSemiBold">app/(tabs)/index.tsx</ThemedText> to see changes.
           Press{' '}
