@@ -2,8 +2,31 @@ import { View, StyleSheet, Text, Dimensions, Image, TouchableOpacity } from 'rea
 import React from 'react'
 import { Video, ResizeMode } from 'expo-av';
 import { Colors } from '@/constants/Colors';
+import { useOAuth } from '@clerk/clerk-expo';
+import * as WebBrowser from "expo-web-browser";
+import { useWarmUpBrowser } from '@/hooks/useWarmUpBrowser';
+
+WebBrowser.maybeCompleteAuthSession();
 
 export default function LoginScreen() {
+  useWarmUpBrowser();
+  const { startOAuthFlow } = useOAuth({ strategy: "oauth_google" });
+
+  const onPress = React.useCallback(async () => {
+    try {
+      const { createdSessionId, signIn, signUp, setActive } =
+        await startOAuthFlow();
+
+      if (createdSessionId) {
+        setActive!({ session: createdSessionId });
+      } else {
+        // Use signIn or signUp for next steps such as MFA
+      }
+    } catch (err) {
+      console.error("OAuth error", err);
+    }
+  }, []);
+
   return (
     <View style={{ flex: 1, height: '100%' }}>
       <Video
@@ -38,18 +61,21 @@ export default function LoginScreen() {
             marginTop: 15,
           }}
         >Ultimate Place to Share your Short Videos with Great Community</Text>
-        <TouchableOpacity style={{
-          display: 'flex',
-          alignItems: 'center',
-          gap: 10,
-          flexDirection: 'row',
-          backgroundColor: Colors.WHITE,
-          padding: 10,
-          paddingHorizontal: 55,
-          borderRadius: 99,
-          position: 'absolute',
-          bottom: 150,
-        }}>
+        <TouchableOpacity
+          onPress={onPress}
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: 10,
+            flexDirection: 'row',
+            backgroundColor: Colors.WHITE,
+            padding: 10,
+            paddingHorizontal: 55,
+            borderRadius: 99,
+            position: 'absolute',
+            bottom: 150,
+          }}
+        >
           <Image
             source={require('@/assets/images/google.png')}
             style={{
